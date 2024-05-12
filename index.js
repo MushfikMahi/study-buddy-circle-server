@@ -15,6 +15,23 @@ const corsOption = {
 }
 app.use(cors(corsOption))
 app.use(express.json())
+app.use(cookieParser())
+
+
+const verifyToken = async(req, res, next)=>{
+  const token = req.cookies?.token
+  if(!token) return res.status(401).send({message: 'unauthorized access'})
+      if(token){
+        jwt.verify(token,process.env.ACCESS_TOKEN_SECRET, (err, decoded)=>{
+          if(err){
+            return  res.status(401).send({message: 'unauthorized access'})
+          }
+          console.log(decoded);
+          req.user = decoded
+        })
+      }
+  next()
+}
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.04rw29h.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
@@ -40,6 +57,7 @@ const client = new MongoClient(uri, {
 
     // jwt genetrate
     app.post('/jwt', async(req, res)=>{
+      
       const user = req.body
       const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {expiresIn:'365d'})
       res.cookie('token',token,{
@@ -87,9 +105,13 @@ const client = new MongoClient(uri, {
         res.send(result)
     })
 
-    app.get('/submitted/:email', async(req, res)=>{
+    app.get('/submitted/:email',verifyToken, async(req, res)=>{
+      const tokenEmail = req.user.email
       console.log('emai',req.params.email);
       const email = req.params.email
+      if(tokenEmail!== email){
+        return res.status(403).send({message: 'forbidden access'})
+      }
       const query = { takerEmail: email}
       const result = await submittedCollection.find(query).toArray();
       res.send(result)
