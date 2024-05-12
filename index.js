@@ -64,7 +64,17 @@ const client = new MongoClient(uri, {
 
     app.get('/submitted/:email', async(req, res)=>{
       console.log('emai',req.params.email);
-      const result = await submittedCollection.find({takerEmail: req.params.email}).toArray();
+      const email = req.params.email
+      const query = { takerEmail: email}
+      const result = await submittedCollection.find(query).toArray();
+      res.send(result)
+    })
+
+    app.get('/assignment_request/:email', async(req, res)=>{
+      console.log('emai',req.params.email);
+      const email = req.params.email
+      const query = { 'creator.email': email}
+      const result = await submittedCollection.find(query).toArray();
       res.send(result)
     })
 
@@ -94,6 +104,13 @@ const client = new MongoClient(uri, {
       }
       const update = await assignmentsCollection.updateOne(filter, updatedAssignment, option)
       res.send(update)
+    })
+
+    app.delete('/delete/:id', async(req, res)=>{
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id)}
+      const result = await assignmentsCollection.deleteOne(query)
+      res.send(result)
     })
 
 
