@@ -70,10 +70,8 @@ const client = new MongoClient(uri, {
       res.send(result)
     })
 
-    app.get('/assignment_request/:email', async(req, res)=>{
-      console.log('emai',req.params.email);
-      const email = req.params.email
-      const query = { 'creator.email': email}
+    app.get('/pending', async(req, res)=>{
+      const query = { status: 'Pending' }
       const result = await submittedCollection.find(query).toArray();
       res.send(result)
     })
