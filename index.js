@@ -75,6 +75,29 @@ const client = new MongoClient(uri, {
       const result = await submittedCollection.find(query).toArray();
       res.send(result)
     })
+    app.get('/marking/:id', async(req, res)=>{
+      const id = req.params.id;
+      console.log(id)
+      const query = { _id: new ObjectId(id)}
+      const find = await submittedCollection.findOne(query)
+      res.send(find)
+    })
+    app.put('/marked/:id', async(req, res)=>{
+      const id = req.params.id;
+      console.log(id)
+      const filter = { _id: new ObjectId(id)}
+      const option = { upsert: true }
+      const assignment = req.body;
+      const givingMark = {
+        $set:{
+          gainedMark: assignment.gainedMark,
+          feedback: assignment.feedback,
+          status: assignment.status,
+        }
+      }
+      const update = await submittedCollection.updateOne(filter, givingMark, option)
+      res.send(update)
+    })
 
     app.get('/update_assignment/:id', async(req, res)=>{
       const id = req.params.id;
