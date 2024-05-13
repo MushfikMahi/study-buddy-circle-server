@@ -53,6 +53,7 @@ const client = new MongoClient(uri, {
 
     const assignmentsCollection = client.db('assignmentsDB').collection('assignments')
     const submittedCollection = client.db('assignmentsDB').collection('submitted')
+    const futureCollection = client.db('assignmentsDB').collection('future')
 
 
     // jwt genetrate
@@ -86,6 +87,11 @@ const client = new MongoClient(uri, {
 
     app.get('/assignments', async(req, res)=>{
         const result = await assignmentsCollection.find().toArray();
+        res.send(result)
+    })
+
+    app.get('/future', async(req, res)=>{
+        const result = await futureCollection.find().toArray();
         res.send(result)
     })
 
