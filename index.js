@@ -9,7 +9,7 @@ const port = process.env.PORT || 5000;
 // middlewere
 
 const corsOption = {
-    origin: ['http://localhost:5173','https://study-buddy-circle.web.app/'], 
+    origin: ['http://localhost:5173','https://study-buddy-circle.web.app','https://study-buddy-circle.firebaseapp.com'], 
     credentials: true, 
     optionSuccessStatus: 200,
 }
